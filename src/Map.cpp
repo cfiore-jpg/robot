@@ -186,6 +186,7 @@ bool Map::removeObject(const Object::Ptr &object) {
     return true;
 }
 
+
 void Map::clearMap() {
     reset(true);
 }
@@ -194,14 +195,38 @@ double Map::spaceAt(int i, int j) const {
     return map_[i][j];
 }
 
-void Map::save(const std::string& filename) {
+bool Map::save(const std::string& filename) {
     std::ofstream outfile(filename);
+    if (!outfile.is_open()) {
+        std::cerr << "Error: Could not open file " << filename << " for writing." << std::endl;
+        return false;
+    }
     outfile << rows << " " << cols << std::endl;
     for (const auto& obj : objects) {
         outfile << obj->coord.x << " " << obj->coord.y << " " << std::setprecision(10) << obj->radius << std::endl;
     }
+    return true;
 }
 
-Map::Ptr load(const std::string& filename) {
+Map::Ptr Map::load(const std::string& filename) {
+    std::ifstream infile(filename);
+    if (!infile.is_open()) {
+        std::cerr << "Error: Could not open file " << filename << " for reading." << std::endl;
+        return nullptr;
+    }
 
+    int r, c;
+    infile >> r >> c;
+    auto new_map = Map::createMap(r, c);
+    std::string line;
+    while (std::getline(infile, line)) {
+        std::istringstream iss(line);
+        int x, y;
+        double radius;
+        if (iss >> x >> y >> radius) {
+            auto new_obj = Object::createObject(x, y, radius);
+            new_map->addObject(new_obj);
+        }
+    }
+    return new_map;
 }

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <unordered_set>
 #include <fstream>
+#include <sstream>
 
 #ifndef ROBOTNAVIGATION_MAP_H
 #define ROBOTNAVIGATION_MAP_H
@@ -72,9 +73,9 @@ public:
 
     [[nodiscard]] double spaceAt(int i, int j) const;
 
-    void save(const std::string& filename);
+    bool save(const std::string& filename);
 
-    Map::Ptr load(const std::string& filename);
+    static Map::Ptr load(const std::string& filename);
 };
 
 

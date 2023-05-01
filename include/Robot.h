@@ -33,7 +33,7 @@ public:
 
 
 struct custom_comp {
-    bool operator()(const std::tuple<double, double, int> &t1, const std::tuple<double, double, int> &t2) {
+    bool operator()(const std::tuple<double, double, int, int> &t1, const std::tuple<double, double, int, int> &t2) {
         if (std::get<0>(t1) != std::get<0>(t2)) {
             return std::get<0>(t1) < std::get<0>(t2);
         } else if (std::get<1>(t1) != std::get<1>(t2)) {
