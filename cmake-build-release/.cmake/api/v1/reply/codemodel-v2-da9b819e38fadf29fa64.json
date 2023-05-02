@@ -6,7 +6,7 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"jsonFile" : "directory-.-Release-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.24"
@@ -19,7 +19,7 @@
 					]
 				}
 			],
-			"name" : "Debug",
+			"name" : "Release",
 			"projects" : 
 			[
 				{
@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "RobotNavigation::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-RobotNavigation-Debug-b4697fb736c427fe0274.json",
+					"jsonFile" : "target-RobotNavigation-Release-5674aac27880a3e26d29.json",
 					"name" : "RobotNavigation",
 					"projectIndex" : 0
 				}
@@ -49,7 +49,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/cameronfiore/C++/ShieldAI/RobotNavigation/cmake-build-debug",
+		"build" : "/Users/cameronfiore/C++/ShieldAI/RobotNavigation/cmake-build-release",
 		"source" : "/Users/cameronfiore/C++/ShieldAI/RobotNavigation"
 	},
 	"version" : 

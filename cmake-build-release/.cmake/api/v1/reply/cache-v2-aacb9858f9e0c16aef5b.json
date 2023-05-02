@@ -43,7 +43,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "Debug"
+			"value" : "Release"
 		},
 		{
 			"name" : "CMAKE_CACHEFILE_DIR",
@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/cameronfiore/C++/ShieldAI/RobotNavigation/cmake-build-debug"
+			"value" : "/Users/cameronfiore/C++/ShieldAI/RobotNavigation/cmake-build-release"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -479,7 +479,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/cameronfiore/C++/ShieldAI/RobotNavigation/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "/Users/cameronfiore/C++/ShieldAI/RobotNavigation/cmake-build-release/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -1102,6 +1102,18 @@
 			"value" : "FALSE"
 		},
 		{
+			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_OpenCV",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Details about finding OpenCV"
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "[/Users/cameronfiore/C++/opencv/build][v4.5.0()]"
+		},
+		{
 			"name" : "RobotNavigation_BINARY_DIR",
 			"properties" : 
 			[
@@ -1111,7 +1123,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/cameronfiore/C++/ShieldAI/RobotNavigation/cmake-build-debug"
+			"value" : "/Users/cameronfiore/C++/ShieldAI/RobotNavigation/cmake-build-release"
 		},
 		{
 			"name" : "RobotNavigation_IS_TOP_LEVEL",

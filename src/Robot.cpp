@@ -4,15 +4,31 @@
 
 #include "../include/Robot.h"
 
+int INFi = std::numeric_limits<int>::max();
+double INFd = std::numeric_limits<double>::max();
 
-Robot::Robot(double r, Map::Ptr m) : radius(r), map_(std::move(m)), start_(Coord(0, 0)), target_(Coord(0, 0)) {}
+Qobject::Qobject(double s, double d, Coord c): space(s), dist(d), coord(c) {}
+
+
+
+Robot::Robot(int x, int y, double r, Map::Ptr m) : Object(x, y, r), map_(std::move(m)), target_(Coord(x, y)) {
+    if (x <= 0 || x >= map_->rows - 1 || y <= 0 || y >= map_->cols - 1) {
+        throw std::invalid_argument("Invalid coordinates for Robot: (" + std::to_string(x) + ", " + std::to_string(y) + ")");
+    }
+    if (nearest(coord, radius) < radius) {
+        throw std::invalid_argument("Robot radius " + std::to_string(r) + " too large for given coordinates.");
+    }
+}
+
 
 bool Robot::setStart(int x, int y) {
     if (x <= 0 || x >= map_->rows - 1 || y <= 0 || y >= map_->cols - 1) {
-        std::cerr << "Can't start the Robot out of bounds..." << std::endl;
-        return false;
+        throw std::invalid_argument("Invalid coordinates for Robot: (" + std::to_string(x) + ", " + std::to_string(y) + ")");
     }
-    start_ = Coord(x, y);
+    if (nearest(coord, radius) < radius) {
+        throw std::invalid_argument("Robot radius " + std::to_string(radius) + " too large for given coordinates.");
+    }
+    coord = Coord(x, y);
     return true;
 }
 
@@ -30,76 +46,178 @@ void Robot::changeMap(Map::Ptr m) {
     map_ = std::move(m);
 }
 
-[[nodiscard]] std::vector<Coord> Robot::findSafestPath(double lambda, bool print) const {
 
-    if (lambda < 0 || lambda > 1) {
-        std::cerr << "Lambda must be between 0 and 1..." << std::endl;
-        return {};
-    }
 
-    if (map_->spaceAt(start_.x, start_.y) < radius) {
-        std::cerr << "Robot cannot fit in start location. Change the start location to a safer area..." << std::endl;
-        return {};
-    }
+double Robot::nearest(const Coord& c, double r) const {
 
-    if (map_->spaceAt(target_.x, target_.y) < radius) {
-        std::cerr << "Impossible to reach target..." << std::endl;
-        return {};
-    }
+    std::unordered_set<int> visited;
+    visited.insert(c.x * map_->cols + c.y);
 
-    std::vector<std::vector<Coord>> links(map_->rows, std::vector<Coord>(map_->cols, Coord(-1, -1)));
-    std::vector<std::vector<bool>> visited(map_->rows, std::vector<bool>(map_->cols, false));
+    std::queue<Coord> q;
+    q.emplace(c);
 
-    std::priority_queue<std::tuple<double, double, int, int>,
-            std::vector<std::tuple<double, double, int, int>>, custom_comp> pq;
-    pq.emplace(map_->spaceAt(start_.x, start_.y),
-               std::hypot(target_.x - start_.x, target_.y - target_.x), start_.x, start_.y);
-    visited[start_.x][start_.y] = true;
+    while (!q.empty()) {
+        auto cur_c = q.front();
+        q.pop();
 
-    while (!pq.empty()) {
-        auto point = pq.top();
-        pq.pop();
-
-        int x = std::get<2>(point);
-        int y = std::get<3>(point);
-        if (x == target_.x && y == target_.y) {
-            break;
-        }
-
-        for (int x_next = std::max(0, x - 1); x_next < std::min(map_->rows, x + 2); ++x_next) {
-            for (int y_next = std::max(0, y - 1); y_next < std::min(map_->cols, y + 2); ++y_next) {
-                if (!visited[x_next][y_next] && map_->spaceAt(x_next, y_next) - radius >= 0) {
-                    double safety = map_->spaceAt(x_next, y_next) - radius;
-                    double dist_to_target = std::hypot(target_.x - x_next, target_.y - y_next);
-                    double score = safety * (1 - lambda) - lambda * dist_to_target;
-
-                    pq.emplace(score, dist_to_target, x_next, y_next);
-                    visited[x_next][y_next] = true;
-                    links[x_next][y_next] = Coord(x, y);
+        if (map_->valAt(cur_c) > 0) {
+            return cur_c.dist(c);
+        } else {
+            std::vector<Coord> next = {{std::max(0, cur_c.x - 1),              cur_c.y},
+                                       {std::min(cur_c.x + 1, map_->rows - 1), cur_c.y},
+                                       {cur_c.x,                               std::min(cur_c.y + 1, map_->cols - 1)},
+                                       {cur_c.x,                               std::max(0, cur_c.y - 1)}};
+            for (const auto &next_c: next) {
+                int next_key = next_c.x * map_->cols + next_c.y;
+                double next_d = next_c.dist(c);
+                if (visited.find(next_key) == visited.end() && next_d <= r) {
+                    visited.insert(next_key);
+                    q.emplace(next_c);
                 }
             }
         }
     }
 
+    return r;
+}
+
+
+
+[[nodiscard]] std::vector<Coord> Robot::findSafestPath(double search_radius, bool display) const {
+
+    if (search_radius < radius) {
+        std::cerr << "Search radius must be greater than or equal to robot radius... " << std::endl;
+        return {};
+    }
+
+    double start_space = nearest(coord, search_radius);
+
+    double diag = std::hypot(map_->rows, map_->cols);
+
+    if (start_space < radius) {
+        std::cerr << "Robot radius too large start here..." << std::endl;
+        return {};
+    }
+
+    std::unordered_map<int, Coord> links;
+    std::unordered_set<int> visited;
+
+    std::priority_queue<Qobject, std::vector<Qobject>, q_comp> pq;
+    pq.emplace(start_space, coord.dist(target_), coord);
+
+    visited.emplace(coord.x * map_->cols + coord.y);
+
+    std::vector<Coord> search;
+    std::vector<cv::Mat> vid;
+
+    while (!pq.empty()) {
+        auto qobj= pq.top();
+        pq.pop();
+
+        const Coord cur_c = qobj.coord;
+        const double cur_s = qobj.space;
+
+        if (cur_c.x == target_.x && cur_c.y == target_.y) {
+            break;
+        }
+
+        auto edges = send(cur_c, std::min(search_radius, cur_s + sqrt(2)));
+
+        search.push_back(qobj.coord);
+        vid.push_back(map_->display({search, edges}, {cv::Vec3b(0, 0, 255), cv::Vec3b(0, 255, 255)}));
+
+        for (const auto & next_c : cur_c.surrounding(map_->rows, map_->cols)) {
+            int next_key = next_c.x * map_->cols + next_c.y;
+            double next_s = recieve(next_c, edges);
+            if (visited.find(next_key) == visited.end() && next_s >= radius) {
+                pq.emplace(next_s,
+                           next_c.dist(target_),
+                           next_c);
+                visited.emplace(next_key);
+                links.insert({next_key, cur_c});
+            }
+        }
+    }
+
+
     std::deque<Coord> dq;
-    if (links[target_.x][target_.y].x == -1 || links[target_.x][target_.y].y == -1) {
+    int target_key = target_.x * map_->cols + target_.y;
+    if (links.find(target_key) == links.end()) {
         std::cerr << "Impossible to reach target..." << std::endl;
         return {};
     } else {
         auto prev = target_;
-        while (!(prev.x == start_.x && prev.y == start_.y)) {
+        while (!(prev.x == coord.x && prev.y == coord.y)) {
             dq.push_front(prev);
-            prev = links[prev.x][prev.y];
+            prev = links.find(prev.x * map_->cols + prev.y)->second;
         }
         dq.push_front(prev);
     }
 
     auto path = std::vector<Coord>(dq.begin(), dq.end());
 
-    if (print) {
-        map_->print(path);
+    for(int i = 0; i < 40; i++) {
+        vid.push_back(map_->display({path}, {cv::Vec3b(0, 0, 255)}));
+    }
+
+    cv::VideoWriter video("/Users/cameronfiore/C++/ShieldAI/RobotNavigationDemo/output.avi", cv::VideoWriter::fourcc('M','J','P','G'), 20, vid[0].size());
+
+    for (const auto& frame : vid) {
+        video.write(frame);
     }
 
     return path;
 }
 
+
+
+
+
+
+
+std::vector<Coord> Robot::send(const Coord& c, double r) const {
+
+    if (map_->valAt(c) > 0) {
+        std::cerr << "Can't send radar from inside an object..." << std::endl;
+        return {};
+    }
+
+    std::unordered_set<int> visited;
+    visited.insert(c.x * map_->cols + c.y);
+
+    std::queue<Coord> q;
+    q.emplace(c);
+
+    std::vector<Coord> edges;
+    edges.reserve(int(floor(3.1415 * r * r)));
+    while (!q.empty()) {
+        auto cur_c = q.front();
+        q.pop();
+        if (map_->valAt(cur_c) > 0) {
+            edges.push_back(cur_c);
+        } else {
+            for (const auto &next_c: cur_c.surrounding(map_->rows, map_->cols)) {
+                int next_key = next_c.x * map_->cols + next_c.y;
+                double next_d = c.dist(next_c);
+                if (visited.find(next_key) == visited.end() && next_d <= r) {
+                    visited.insert(next_key);
+                    q.push(next_c);
+                }
+            }
+        }
+    }
+    return edges;
+}
+
+
+
+double Robot::recieve(const Coord& c, const std::vector<Coord>& edges) {
+    double nearest = std::numeric_limits<double>::max();
+    for(const auto & coord : edges) {
+        double dist = c.dist(coord);
+        if (dist < nearest) {
+            nearest = dist;
+        }
+    }
+    return nearest;
+}

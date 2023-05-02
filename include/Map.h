@@ -2,52 +2,21 @@
 #include <iostream>
 #include <queue>
 #include <iomanip>
-#include <cmath>
 #include <unordered_set>
 #include <fstream>
 #include <sstream>
+#include <opencv2/opencv.hpp>
+#include <unordered_map>
+
+#include "Object.h"
 
 #ifndef ROBOTNAVIGATION_MAP_H
 #define ROBOTNAVIGATION_MAP_H
 
-struct Coord {
-public:
-    int x;
-    int y;
-
-public:
-    Coord(int i, int j);
-
-};
-
-
-
-
-
-struct Object {
-public:
-    const Coord coord;
-    const double radius;
-    using Ptr = std::shared_ptr<Object>;
-
-public:
-    Object(int x, int y, double radius);
-
-    static Object::Ptr createObject(int x, int y, double radius);
-
-    [[nodiscard]] double distanceFrom(double x, double y) const;
-
-};
-
-
-
+#endif //ROBOTNAVIGATION_MAP_H
 
 
 class Map {
-
-private:
-    std::vector<std::vector<double>> map_;
-    std::unordered_set<Object::Ptr> objects;
 
 public:
     const int rows;
@@ -56,28 +25,35 @@ public:
 
 
 private:
-    void reset(bool clear_objects);
+    std::vector<std::vector<int>> map_;
+    std::unordered_set<Object::Ptr> objects;
+
 
 public:
     Map(int r, int c);
 
     static Map::Ptr createMap(int r, int c);
 
-    void print(const std::vector<Coord> &path) const;
+    int numObjects();
+
+    cv::Mat display();
+
+    cv::Mat display(const std::vector<std::vector<Coord>>& paths,
+                 const std::vector<cv::Vec3b>& colors);
 
     bool addObject(const Object::Ptr& object);
 
+    Object::Ptr addObject(int x, int y, double r);
+
     bool removeObject(const Object::Ptr& object);
+
+    bool removeObject(int x, int y, double r);
 
     void clearMap();
 
-    [[nodiscard]] double spaceAt(int i, int j) const;
+    [[nodiscard]] double valAt(const Coord& c) const;
 
     bool save(const std::string& filename);
 
     static Map::Ptr load(const std::string& filename);
 };
-
-
-
-#endif //ROBOTNAVIGATION_MAP_H
