@@ -148,11 +148,11 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "/Users/cameronfiore/C++/opencv/build/OpenCVConfig-version.cmake"
+			"path" : "/usr/local/lib/cmake/opencv4/OpenCVConfig-version.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "/Users/cameronfiore/C++/opencv/build/OpenCVConfig.cmake"
+			"path" : "/usr/local/lib/cmake/opencv4/OpenCVConfig.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -166,7 +166,11 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "/Users/cameronfiore/C++/opencv/build/OpenCVModules.cmake"
+			"path" : "/usr/local/lib/cmake/opencv4/OpenCVModules.cmake"
+		},
+		{
+			"isExternal" : true,
+			"path" : "/usr/local/lib/cmake/opencv4/OpenCVModules-release.cmake"
 		}
 	],
 	"kind" : "cmakeFiles",

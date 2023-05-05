@@ -1,10 +1,18 @@
 # ninja log v5
-2	1848	1683052004384123004	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	9cb32bb6630092e8
-3	853	1683051207638246710	CMakeFiles/RobotNavigation.dir/src/Object.cpp.o	85f3cc5d87661eff
-3	2023	1683052004560719293	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	70b6e5f143587574
-2023	2122	1683052004673745994	libRobotNavigation.dylib	ac5d611db1e930e8
-0	208	1683052211198617161	build.ninja	c9fdd1640587b400
-4	497	1683052215603837081	CMakeFiles/RobotNavigation.dir/src/Object.cpp.o	c70807ff4e8186f5
-4	1313	1683052216418279379	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	36d97e75530a14d9
-4	1696	1683052216801269761	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	f6504f9fcd74b848
-1696	1749	1683052216858777791	libRobotNavigation.dylib	a1286359f5dd7ade
+0	58	1683163858774589068	build.ninja	c9fdd1640587b400
+2254	2349	1683237436700326885	libRobotNavigation.dylib	c0b71a7e8cae98ef
+2	2253	1683237436598290844	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	e3c8e17e8edb83c3
+4	708	1683223277115360582	CMakeFiles/RobotNavigation.dir/src/Object.cpp.o	6b0c98e5345d43c6
+2	1608	1683233711870526741	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	a3bbd65b7d2b6a90
+2	1612	1683237637802993581	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	e3c8e17e8edb83c3
+1612	1685	1683237637879253664	libRobotNavigation.dylib	c0b71a7e8cae98ef
+2	1744	1683237861810659348	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	e3c8e17e8edb83c3
+1744	1812	1683237861884575151	libRobotNavigation.dylib	c0b71a7e8cae98ef
+2	1515	1683238234466538181	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	e3c8e17e8edb83c3
+1515	1569	1683238234524879062	libRobotNavigation.dylib	c0b71a7e8cae98ef
+3	1757	1683238839724618814	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	e3c8e17e8edb83c3
+1757	1828	1683238839801104626	libRobotNavigation.dylib	c0b71a7e8cae98ef
+3	2159	1683255611532245839	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	e3c8e17e8edb83c3
+2159	2236	1683255611628292639	libRobotNavigation.dylib	c0b71a7e8cae98ef
+2	1520	1683256205861090691	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	a3bbd65b7d2b6a90
+1520	1590	1683256205936802632	libRobotNavigation.dylib	c0b71a7e8cae98ef

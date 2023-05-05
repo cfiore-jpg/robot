@@ -5,11 +5,8 @@
 #include <iostream>
 #include <cmath>
 
-
 #ifndef ROBOTNAVIGATION_OBJECT_H
 #define ROBOTNAVIGATION_OBJECT_H
-
-#endif //ROBOTNAVIGATION_OBJECT_H
 
 struct Coord {
 public:
@@ -27,12 +24,13 @@ public:
 
 
 
-class Object {
+class Object : public std::enable_shared_from_this<Object> {
 
 protected:
     Coord coord;
 
 public:
+    bool flag;
     const double radius;
     using Ptr = std::shared_ptr<Object>;
 
@@ -46,3 +44,5 @@ public:
     [[nodiscard]] int y() const;
 
 };
+
+#endif //ROBOTNAVIGATION_OBJECT_H

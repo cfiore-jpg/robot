@@ -10,12 +10,6 @@ Map::Map(int r, int c) : rows(r), cols(c) {
     if (c < 1) {
         throw std::invalid_argument("cols must be greater than or equal to 1");
     }
-    map_.resize(rows, std::vector<int>(cols, 0));
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            if (i == 0 || j == 0 || i == rows - 1 || j == cols - 1) map_[i][j] = 1;
-        }
-    }
 }
 
 Map::Ptr Map::createMap(int r, int c) {
@@ -23,59 +17,62 @@ Map::Ptr Map::createMap(int r, int c) {
 }
 
 int Map::numObjects() {
-    return int(objects.size());
+    return int(obstacles.size());
 }
 
 cv::Mat Map::display() {
 
-    int mult = std::max(1000 / std::max(rows, cols), 1);
-
-    const int _rows = rows * mult;
-    const int _cols = cols * mult;
-
-    cv::Mat image(rows * mult, cols * mult, CV_8UC3);
-
-    for (int i = 0; i < _rows; i++) {
-        for (int j = 0; j < _cols; j++) {
-            if (map_[i / mult][j / mult]) {
-                image.at<cv::Vec3b>(i, j)[0] = 255;
+    cv::Mat image(rows, cols, CV_8UC3);
+    image.setTo(cv::Scalar(0, 0, 0));
+    for(const auto & obj : obstacles) {
+        int lx = int(ceil(obj->x() - obj->radius));
+        int ux = int(floor(obj->x() + obj->radius));
+        for (int i = std::max(0, lx); i <= std::min(ux, rows - 1); i++) {
+            int ly = int(ceil(obj->y() - sqrt(obj->radius * obj->radius - (i - obj->x()) * (i - obj->x()))));
+            int uy = int(floor(obj->y() + sqrt(obj->radius * obj->radius - (i - obj->x()) * (i - obj->x()))));
+            for (int j = std::max(0, ly); j <= std::min(uy, cols - 1); j++) {
+                image.at<cv::Vec3b>(i, j) = cv::Vec3b(255,0,0);
             }
         }
     }
-    return image;
+
+    cv::Mat resized_image;
+    int scale = std::max(1000 / std::max(rows, cols), 1);
+    cv::resize(image, resized_image, cv::Size(), scale, scale, cv::INTER_NEAREST);
+
+    return resized_image;
 }
 
 cv::Mat Map::display(const std::vector<std::vector<Coord>>& paths,
                   const std::vector<cv::Vec3b>& colors) {
 
-    int mult = std::max(1000 / std::max(rows, cols), 1);
-
-    const int _rows = rows * mult;
-    const int _cols = cols * mult;
-
-    cv::Mat image(_rows, _cols, CV_8UC3);
-
-    for (int i = 0; i < _rows; i++) {
-        for (int j = 0; j < _cols; j++) {
-            if (map_[i / mult][j / mult]) {
-                image.at<cv::Vec3b>(i, j)[0] = 255;
+    cv::Mat image(rows, cols, CV_8UC3);
+    image.setTo(cv::Scalar(0, 0, 0));
+    for(const auto & obj : obstacles) {
+        int lx = int(ceil(obj->x() - obj->radius));
+        int ux = int(floor(obj->x() + obj->radius));
+        for (int i = std::max(0, lx); i <= std::min(ux, rows - 1); i++) {
+            int ly = int(ceil(obj->y() - sqrt(obj->radius * obj->radius - (i - obj->x()) * (i - obj->x()))));
+            int uy = int(floor(obj->y() + sqrt(obj->radius * obj->radius - (i - obj->x()) * (i - obj->x()))));
+            for (int j = std::max(0, ly); j <= std::min(uy, cols - 1); j++) {
+                image.at<cv::Vec3b>(i, j) = cv::Vec3b(255,0,0);
             }
         }
     }
 
     for (int p = 0; p < paths.size(); p++) {
-        const cv::Vec3b& color = colors[p];
+        const cv::Vec3b &color = colors[p];
         for (const auto &coord: paths[p]) {
             assert(coord.x >= 0 && coord.y < rows && coord.y >= 0 && coord.y < cols);
-            for (int i = coord.x * mult; i < (coord.x + 1) * mult; i++) {
-                for (int j = coord.y * mult; j < (coord.y + 1) * mult; j++) {
-                    image.at<cv::Vec3b>(i, j) = color;
-                }
-            }
+            image.at<cv::Vec3b>(coord.x, coord.y) = color;
         }
     }
 
-    return image;
+    cv::Mat resized_image;
+    int scale = std::max(1000 / std::max(rows, cols), 1);
+    cv::resize(image, resized_image, cv::Size(), scale, scale, cv::INTER_NEAREST);
+
+    return resized_image;
 }
 
 bool Map::addObject(const Object::Ptr &object) {
@@ -85,21 +82,15 @@ bool Map::addObject(const Object::Ptr &object) {
     const double c_r = object->radius;
 
     if (c_x < 0 || c_x > rows - 1 || c_y < 0 || c_y > cols - 1) {
-        std::cerr << "Object location is out of bounds..." << std::endl;
-        return false;
+        throw std::invalid_argument("Object location is out of bounds...\n");
     }
 
-    int lx = int(ceil(c_x - c_r));
-    int ux = int(floor(c_x + c_r));
-    for (int i = std::max(0, lx); i <= std::min(ux, rows - 1); i++) {
-        int ly = int(ceil(c_y - sqrt(c_r * c_r - (i - c_x) * (i - c_x))));
-        int uy = int(floor(c_y + sqrt(c_r * c_r - (i - c_x) * (i - c_x))));
-        for (int j = std::max(0, ly); j <= std::min(uy, cols - 1); j++) {
-            map_[i][j] += 1;
-        }
+    obstacles.insert(object);
+
+    for(auto & rob : robots) {
+        rob->flag = false;
     }
 
-    objects.insert(object);
     return true;
 }
 
@@ -116,42 +107,31 @@ Object::Ptr Map::addObject(int x, int y, double r) {
 
 bool Map::removeObject(const Object::Ptr &object) {
 
-    auto iter = objects.find(object);
-    if (iter == objects.end()) {
-        std::cerr << "This map does not contain that object..." << std::endl;
-        return false;
+    auto iter = obstacles.find(object);
+    if (iter == obstacles.end()) {
+        throw std::invalid_argument("This map does not contain that object...\n");
     }
 
-    const Object::Ptr& to_delete = *iter;
-    const int c_x = to_delete->x();
-    const int c_y = to_delete->y();
-    const double c_r = to_delete->radius;
+    obstacles.erase(iter);
 
-    int lx = int(ceil(c_x - c_r));
-    int ux = int(floor(c_x + c_r));
-    for (int i = std::max(0, lx); i <= std::min(ux, rows - 1); i++) {
-        int ly = int(ceil(c_y - sqrt(c_r * c_r - (i - c_x) * (i - c_x))));
-        int uy = int(floor(c_y + sqrt(c_r * c_r - (i - c_x) * (i - c_x))));
-        for (int j = std::max(0, ly); j <= std::min(uy, cols - 1); j++) {
-            map_[i][j] -= 1;
-        }
+    for(auto & rob : robots) {
+        rob->flag = false;
     }
 
-    objects.erase(iter);
     return true;
 }
 
 bool Map::removeObject(int x, int y, double r) {
 
     Object::Ptr to_delete = nullptr;
-    for (const auto & obj : objects) {
+    for (const auto & obj : obstacles) {
         if (obj->x() == x && obj->y() == y && std::fabs(obj->radius - r) <= 0.000001) {
             to_delete = obj;
             break;
         }
     }
     if (to_delete == nullptr) {
-        std::cerr << "This map does not contain an object with those parameters..." << std::endl;
+        throw std::invalid_argument("This map does not contain an object with those parameters...\n");
         return false;
     }
 
@@ -159,36 +139,24 @@ bool Map::removeObject(int x, int y, double r) {
 }
 
 void Map::clearMap() {
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            if (i == 0 || j == 0 || i == rows - 1 || j == cols - 1) {
-                map_[i][j] = 1;  // Edge element, set value to 1
-            } else {
-                map_[i][j] = 0;  // Non-edge element, set value to 0
-            }
-        }
+    obstacles.clear();
+    for(auto & rob : robots) {
+        rob->flag = false;
     }
-    objects.clear();
 }
 
-[[nodiscard]] double Map::valAt(const Coord& c) const {
-
-    if (c.x < 0 || c.x > rows - 1 || c.y < 0 || c.y > cols - 1) {
-        std::cerr << "Coordinate out of bounds..." << std::endl;
-        return -1;
-    }
-
-    return map_[c.x][c.y];
+[[nodiscard]] std::vector<Object::Ptr> Map::getObstacles() const {
+    return {obstacles.begin(), obstacles.end()};
 }
 
 bool Map::save(const std::string& filename) {
     std::ofstream outfile(filename);
     if (!outfile.is_open()) {
-        std::cerr << "Error: Could not open file " << filename << " for writing." << std::endl;
+        std::cerr << "Error: Could not open file " << filename << " for writing.\n";
         return false;
     }
     outfile << rows << " " << cols << std::endl;
-    for (const auto& obj : objects) {
+    for (const auto& obj : obstacles) {
         outfile << obj->x() << " " << obj->y() << " " << std::setprecision(10) << obj->radius << std::endl;
     }
     return true;
@@ -197,7 +165,7 @@ bool Map::save(const std::string& filename) {
 Map::Ptr Map::load(const std::string& filename) {
     std::ifstream infile(filename);
     if (!infile.is_open()) {
-        std::cerr << "Error: Could not open file " << filename << " for reading." << std::endl;
+        std::cerr << "Error: Could not open file " << filename << " for reading.\n";
         return nullptr;
     }
 
@@ -214,4 +182,33 @@ Map::Ptr Map::load(const std::string& filename) {
         }
     }
     return new_map;
+}
+
+bool Map::addRobot(const Object::Ptr& bot, bool force) {
+
+    const int c_x = bot->x();
+    const int c_y = bot->y();
+
+    if (c_x < 0 || c_x > rows - 1 || c_y < 0 || c_y > cols - 1) {
+        if (!force) {
+            throw std::invalid_argument("Robot location is out of bounds...\n");
+        } else {
+            std::cerr << "Robot location is out of bounds...\n";
+        }
+    }
+
+    robots.insert(bot);
+
+    return true;
+
+}
+
+bool Map::removeRobot(const Object::Ptr& bot) {
+    auto iter = robots.find(bot);
+    if (iter == robots.end()) {
+        std::cerr << "This map does not contain that robot...\n";
+        return false;
+    }
+    robots.erase(iter);
+    return true;
 }

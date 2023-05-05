@@ -1,15 +1,5 @@
 # ninja log v5
-2	1496	1683051022645640292	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	8213eb25d10896f6
-5	416	1683049999143169684	CMakeFiles/RobotNavigation.dir/src/Object.cpp.o	44046fbf7a62d834
-2	1584	1683051137958739508	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	f3b5e3bb9ec0197d
-1584	1642	1683051138021094348	libRobotNavigation.dylib	d0a709ff28bff403
-2	374	1683052220487382776	CMakeFiles/RobotNavigation.dir/src/Object.cpp.o	2c1056f9a32bf59d
-2	1146	1683052221259022623	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	8bf9b5fa2f11fe02
-2	1436	1683052221547751690	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	b60b832ba189bc7c
-1436	1468	1683052221584480058	libRobotNavigation.dylib	5be37102c0620cf0
-5	1940	1683052330391195877	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	b60b832ba189bc7c
-1940	1992	1683052330449195240	libRobotNavigation.dylib	5be37102c0620cf0
-2	1499	1683052666393604039	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	b60b832ba189bc7c
-1499	1553	1683052666452190902	libRobotNavigation.dylib	5be37102c0620cf0
+3	1419	1683057761475468045	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	8bf9b5fa2f11fe02
+5	534	1683057784429737166	CMakeFiles/RobotNavigation.dir/src/Object.cpp.o	2c1056f9a32bf59d
 2	1747	1683053827998897126	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	b60b832ba189bc7c
-1747	1802	1683053828058515905	libRobotNavigation.dylib	5be37102c0620cf0
+534	586	1683057784483685696	libRobotNavigation.dylib	c59e921d12268c12

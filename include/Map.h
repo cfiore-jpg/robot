@@ -16,7 +16,7 @@
 #endif //ROBOTNAVIGATION_MAP_H
 
 
-class Map {
+ class Map {
 
 public:
     const int rows;
@@ -25,8 +25,8 @@ public:
 
 
 private:
-    std::vector<std::vector<int>> map_;
-    std::unordered_set<Object::Ptr> objects;
+    std::unordered_set<Object::Ptr> obstacles;
+    std::unordered_set<Object::Ptr> robots;
 
 
 public:
@@ -51,9 +51,13 @@ public:
 
     void clearMap();
 
-    [[nodiscard]] double valAt(const Coord& c) const;
+    [[nodiscard]] std::vector<Object::Ptr> getObstacles() const;
 
     bool save(const std::string& filename);
 
     static Map::Ptr load(const std::string& filename);
+
+    bool addRobot(const Object::Ptr& bot, bool force);
+
+    bool removeRobot(const Object::Ptr& bot);
 };
