@@ -14,7 +14,7 @@ public:
     int y;
 
 public:
-    Coord(int i, int j);
+    Coord(int i, int j) : x(i), y(j) {}
 
     [[nodiscard]] double dist(const Coord& c) const;
 
@@ -30,14 +30,15 @@ protected:
     Coord coord;
 
 public:
-    bool flag;
     const double radius;
     using Ptr = std::shared_ptr<Object>;
 
 public:
-    Object(int x, int y, double radius);
+    Object(int i, int j, double r) : coord(Coord(i, j)), radius(r) {}
 
     static Object::Ptr createObject(int x, int y, double radius);
+
+    double dist(const Coord& c) const;
 
     [[nodiscard]] int x() const;
 

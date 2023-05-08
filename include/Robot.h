@@ -17,23 +17,7 @@ public:
     Coord coord;
 
 public:
-    Qobject (double s, double d, Coord c);
-};
-
-
-struct Qcomp {
-public:
-    double l;
-    explicit Qcomp(double l_value) : l(l_value) {}
-    bool operator()(const Qobject &q1, const Qobject &q2) const {
-        double a = l * q1.space - (1. - l) * std::log(q1.dist + 0.0000000001);
-        double b = l * q2.space - (1. - l) * std::log(q2.dist + 0.0000000001);
-        if (std::fabs(a - b) > 0.0001) {
-            return a < b;
-        } else {
-            return -std::log(q1.dist + 0.0000000001) < -std::log(q2.dist + 0.0000000001);
-        }
-    }
+    Qobject(double s, double d, Coord c): space(s), dist(d), coord(c) {}
 };
 
 
@@ -41,11 +25,7 @@ class Robot : public Object {
 
 private:
     Map::Ptr map_;
-    std::vector<std::vector<double>> heat_map_;
-
     Coord target_;
-    double search_radius;
-
 
 public:
     using Ptr = std::shared_ptr<Robot>;
@@ -53,36 +33,23 @@ public:
 
 public:
 
-    Robot(int x, int y, double r, double sr);
+    Robot(double r);
 
-    static Robot::Ptr create(int x, int y, double r, double sr, const Map::Ptr& m);
+    static Robot::Ptr create(double r);
 
     bool setStart(int x, int y);
 
     bool setTarget(int x, int y);
 
-    bool setSearchRadius(double sr);
+    bool giveMap(Map::Ptr m);
 
-    bool changeMap(const Map::Ptr& m);
+    cv::Mat showOnMap(bool show_heat_map,
+                      const std::vector<std::vector<Coord>>& paths = {},
+                      const std::vector<cv::Vec3b>& colors = {});
 
-    cv::Mat showHeatMap();
-
-    cv::Mat showHeatMap(const std::vector<std::vector<Coord>>& paths,
-                    const std::vector<cv::Vec3b>& colors);
-
-    std::vector<Coord> findSafestPath(double lambda, bool save, const std::string& fn = "output");
+    std::vector<Coord> pathFind(double lambda, bool save, const std::string& fn = "output");
 
     void printParameters() const;
-
-
-private:
-
-    bool buildHeatMap();
-
-    void placeObstacle(const Object::Ptr &object);
-
-    double valAt(const Coord& c) const;
-
 };
 
 

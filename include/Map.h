@@ -1,3 +1,4 @@
+#include <utility>
 #include <vector>
 #include <iostream>
 #include <queue>
@@ -15,49 +16,67 @@
 
 #endif //ROBOTNAVIGATION_MAP_H
 
+#define MAX_ROWS 100000
+#define MAX_COLS 100000
+
+ struct MapItem {
+public:
+    double dist;
+    Object::Ptr obj;
+
+public:
+    explicit MapItem(double d, Object::Ptr o): dist(d), obj(std::move(o)) {}
+};
+
+struct MapComp {
+public:
+    bool operator()(const MapItem &m1, const MapItem &m2) const {
+        return m1.dist > m2.dist;
+    }
+};
+
 
  class Map {
 
-public:
-    const int rows;
-    const int cols;
-    using Ptr = std::shared_ptr<Map>;
+ public:
+     const int rows;
+     const int cols;
+     using Ptr = std::shared_ptr<Map>;
 
 
-private:
-    std::unordered_set<Object::Ptr> obstacles;
-    std::unordered_set<Object::Ptr> robots;
+ private:
+     std::vector<double> vert_dist_;
+     std::vector<double> hor_dist_;
+     std::vector<std::priority_queue<MapItem, std::vector<MapItem>, MapComp>> heat_map_;
+     std::unordered_set<Object::Ptr> obstacles;
 
 
-public:
-    Map(int r, int c);
+ public:
+     Map(int r, int c);
 
-    static Map::Ptr createMap(int r, int c);
+     static Map::Ptr createMap(int r, int c);
 
-    int numObjects();
+     int numObjects();
 
-    cv::Mat display();
+     bool addObject(const Object::Ptr &object);
 
-    cv::Mat display(const std::vector<std::vector<Coord>>& paths,
-                 const std::vector<cv::Vec3b>& colors);
+     Object::Ptr addObject(int x, int y, double r);
 
-    bool addObject(const Object::Ptr& object);
+     bool removeObject(const Object::Ptr &object);
 
-    Object::Ptr addObject(int x, int y, double r);
+     Object::Ptr removeObject(int x, int y, double r);
 
-    bool removeObject(const Object::Ptr& object);
+     void clearMap();
 
-    bool removeObject(int x, int y, double r);
+     [[nodiscard]] std::vector<Object::Ptr> getObstacles() const;
 
-    void clearMap();
+     double valAt(const Coord &c);
 
-    [[nodiscard]] std::vector<Object::Ptr> getObstacles() const;
+     double valAt(int x, int y);
 
-    bool save(const std::string& filename);
+     cv::Mat display(bool show_heat_map);
 
-    static Map::Ptr load(const std::string& filename);
+     bool save(const std::string &filename);
 
-    bool addRobot(const Object::Ptr& bot, bool force);
-
-    bool removeRobot(const Object::Ptr& bot);
-};
+     static Map::Ptr load(const std::string &filename);
+ };

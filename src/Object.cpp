@@ -6,30 +6,24 @@
 
 
 //// Coord
-Coord::Coord(int i, int j) : x(i), y(j) {}
-
 double Coord::dist(const Coord& c) const {
     return std::hypot(c.x - x, c.y - y);
 }
 
 std::vector<Coord> Coord::surrounding(int max_x, int max_y) const {
-
     int lbx = std::max(0, x - 1);
-    int ubx = std::min(max_x - 1, x + 1);
-
+    int ubx = std::min(max_x, x + 2);
     int lby = std::max(0, y - 1);
-    int uby = std::min(max_y - 1, y + 1);
-
-    std::vector<Coord> sur = {
-            {lbx, lby},
-            {lbx, y},
-            {lbx, uby},
-            {x, lby},
-            {x, uby},
-            {ubx, lby},
-            {ubx, y},
-            {ubx, uby}};
-
+    int uby = std::min(max_y, y + 2);
+    std::vector<Coord> sur;
+    sur.reserve(8);
+    for(int i = lbx; i < ubx; i++) {
+        for(int j = lby; j < uby; j++) {
+            if(i != x || j != y) {
+                sur.emplace_back(i, j);
+            }
+        }
+    }
     return sur;
 }
 
@@ -37,10 +31,13 @@ std::vector<Coord> Coord::surrounding(int max_x, int max_y) const {
 
 
 //// Object
-Object::Object(int i, int j, double r) : coord(Coord(i, j)), radius(r), flag(true) {}
 
 Object::Ptr Object::createObject(int x, int y, double radius) {
     return std::make_shared<Object>(x, y, radius);
+}
+
+double Object::dist(const Coord& c) const {
+    return coord.dist(c);
 }
 
 int Object::x() const {
