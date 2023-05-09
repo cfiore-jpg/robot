@@ -33,7 +33,7 @@ public:
 
 public:
 
-    Robot(double r);
+    explicit Robot(double r);
 
     static Robot::Ptr create(double r);
 
@@ -50,6 +50,29 @@ public:
     std::vector<Coord> pathFind(double lambda, bool save, const std::string& fn = "output");
 
     void printParameters() const;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public:
+    cv::Mat showOnMapV1(bool show_heat_map,
+                             const std::vector<std::vector<Coord>>& paths = {},
+                             const std::vector<cv::Vec3b>& colors = {});
+    std::vector<Coord> pathFindV1(bool save, const std::string& fn = "output");
+
 };
 
 

@@ -1,6 +1,21 @@
 # ninja log v5
-0	58	1683581916685009497	build.ninja	c9fdd1640587b400
-2081	2162	1683366984654310127	libRobotNavigation.dylib	c0b71a7e8cae98ef
-2	1977	1683365736155125612	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	e3c8e17e8edb83c3
-8	924	1683315747327756111	CMakeFiles/RobotNavigation.dir/src/Object.cpp.o	6b0c98e5345d43c6
-10	2081	1683366984562697167	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	a3bbd65b7d2b6a90
+0	58	1683586885571065322	build.ninja	c9fdd1640587b400
+1689	1764	1683586775513741618	libRobotNavigation.dylib	c0b71a7e8cae98ef
+3	1626	1683586775370787153	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	e3c8e17e8edb83c3
+3	717	1683586774463099483	CMakeFiles/RobotNavigation.dir/src/Object.cpp.o	6b0c98e5345d43c6
+2	1689	1683586775434449017	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	a3bbd65b7d2b6a90
+3	1347	1683587697963468976	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	e3c8e17e8edb83c3
+2	1418	1683587698035246640	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	a3bbd65b7d2b6a90
+1418	1475	1683587698096511916	libRobotNavigation.dylib	c0b71a7e8cae98ef
+3	1674	1683587802646151802	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	a3bbd65b7d2b6a90
+1675	1740	1683587802716663043	libRobotNavigation.dylib	c0b71a7e8cae98ef
+3	2049	1683587902341843354	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	a3bbd65b7d2b6a90
+2050	2150	1683587902448212114	libRobotNavigation.dylib	c0b71a7e8cae98ef
+3	1700	1683587939488967631	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	a3bbd65b7d2b6a90
+1700	1767	1683587939560519668	libRobotNavigation.dylib	c0b71a7e8cae98ef
+3	1651	1683588578356061520	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	e3c8e17e8edb83c3
+3	1713	1683588578418589219	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	a3bbd65b7d2b6a90
+1713	1787	1683588578497414669	libRobotNavigation.dylib	c0b71a7e8cae98ef
+3	2130	1683591512343503912	CMakeFiles/RobotNavigation.dir/src/Robot.cpp.o	e3c8e17e8edb83c3
+3	2134	1683591512347810987	CMakeFiles/RobotNavigation.dir/src/Map.cpp.o	a3bbd65b7d2b6a90
+2134	2198	1683591512416343736	libRobotNavigation.dylib	c0b71a7e8cae98ef

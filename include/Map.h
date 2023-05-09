@@ -62,7 +62,7 @@ public:
 
      Object::Ptr addObject(int x, int y, double r);
 
-     bool removeObject(const Object::Ptr &object);
+     bool removeObject(const Object::Ptr &object, const std::string& fn);
 
      Object::Ptr removeObject(int x, int y, double r);
 
@@ -79,4 +79,36 @@ public:
      bool save(const std::string &filename);
 
      static Map::Ptr load(const std::string &filename);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ private:
+     std::vector<double> dummy_;
+
+
+ public:
+     int rows_d;
+     int cols_d;
+
+     cv::Mat displayDummy(bool show_heat_map);
+
+
+     void initV1(int rows, int cols);
+     bool addObjectV1(const Object::Ptr &object);
+     bool addObjectV1(const Object::Ptr &object, const std::string& fn);
+     bool removeObjectV1(const Object::Ptr &object);
+     double valAtV1(int x, int y);
+
  };
