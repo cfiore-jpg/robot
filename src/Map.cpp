@@ -212,7 +212,9 @@ Object::Ptr Map::removeObject(int x, int y, double r) {
 
 // Remove all objects from the map.
 void Map::clearMap() {
-    obstacles.clear();
+    for (const auto & obs : obstacles) {
+        removeObject(obs);
+    }
 }
 
 
